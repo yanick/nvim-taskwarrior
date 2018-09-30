@@ -1,0 +1,22 @@
+{
+  "name": "taskwarrior",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Yanick Champoux <yanick@babyl.ca> (http://techblog.babyl.ca)",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/preset-stage-0": "^7.0.0",
+    "@babel/preset-stage-1": "^7.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-node": "^6.5.3",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-preset-env": "^1.7.0",
+    "moment": "^2.22.2",
+    "taskwarrior": "^1.0.0"
+  }
+}

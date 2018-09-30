@@ -97,9 +97,115 @@ a plugin is explicitly required.
 
 
 All that to say that, for once, I was curious to try what was already on offer
-before rushing in and reimplenting it myself.
+before rushing in and reimplenting it myself. What do you know, I might
+actually getting wiser in my old age...
 
 ## Comparison study #1
+
+For a first comparison, I picked a very simple plugin. Its whole purpose
+in life is to replace the token `__PACKAGE__` in the current
+line into the Perl module representation of the filename -- the end-goal
+being having a snippet/macro take automatically inserting `package Foo::Bar;`
+in the Perl file `./lib/Foo/Bar.pm`.
+
+With `Neovim::RPC`, the plugin looks like 
+
+```perl 
+package Neovim::RPC::Plugin::FileToPackageName;
+
+use 5.20.0;
+
+use strict;
+use warnings;
+
+use Neovim::RPC::Plugin;
+
+use Promises qw/ collect /;
+
+use experimental 'signatures';
+
+sub file_to_package_name {
+    shift
+        =~ s#^(.*/)?lib/##r
+        =~ s#^/##r
+        =~ s#/#::#rg
+        =~ s#\.p[ml]$##r;
+}
+
+sub shall_get_filename ($self) {
+    $self->api->vim_call_function( fname => 'expand', args => [ '%:p' ] );
+}
+
+subscribe file_to_package_name => rpcrequest 
+    sub($self,@) {
+        collect(
+            filename => $self->shall_get_filename,
+            line     => $self->api->vim_get_current_line,
+        )
+    },
+    sub ($self,$props) {
+        $self->api->vim_set_current_line(
+            $props->{line} =~ s/__PACKAGE__/
+                file_to_package_name($props->{filename})
+            /er
+        )
+    };
+```
+
+And it needs the following glue in the neovim config:
+
+```
+function! FileToPackage()
+    call Nvimx_request( 'load_plugin', 'FileToPackageName' )
+    call Nvimx_request('file_to_package_name')
+endfunction
+```
+
+It's... not bad. We request the filename and the current line's content
+from neovim (in the form of promises, because asynchronicity), munge the line 
+with the resolved package name, and then push it back to the editor.
+Probably not cristal-clear at first read, but nothing that
+will straight-up make you reach for the bottle.
+
+What does does the JavaScript version looks like? Like this:
+
+```
+class packageName {
+
+  constructor(plugin) {
+    this.plugin = plugin;
+
+    plugin.registerCommand('SetPackageName', [this, this.setPackageName]);
+  }
+
+  async setPackageName() {
+    let [ filename, line ] = await Promise.all([
+        this.plugin.nvim.callFunction( 'expand', [ '%:p' ] ),
+        this.plugin.nvim.getLine(),
+    ]);
+
+    this.plugin.nvim.setLine( this.expandPackage(line,filename) );
+  }
+
+    expandPackage( line, filename ) {
+        let packageName = filename 
+            .replace( /^(.*\/)?lib\//, '' )
+            .replace( /^\//, '' )
+            .replace( /\//g, '::' )
+            .replace( /\.p[ml]$/, '' );
+
+        return line.replace( '__PACKAGE__', packageName );
+    }
+
+}
+
+module.exports = packageName;
+```
+
+
+
+
+
 
 ## Comparison study #2
 

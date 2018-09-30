@@ -1,0 +1,116 @@
+created: 2018-09-30
+---
+
+# Neovim Remote Plugins: NodeJS Strikes Back 
+
+This week, I discovered amazeball things about Neovim 
+remote plugins that are nothing short of paradigm-shifting, 
+mind-torchblowing, game changers.
+
+Being myself, I've been on a life-long quest to custom Vim to the point where
+it'd become impossible to know where the editor stops and the man begins.
+I experimented with Vim's embedded Perl interperter and created 
+a [plugin system]() for it. Then I discovered [Neovim](). Highly
+compatible, but with less cruft and a few extra goodies over classic Vim. 
+One of those goodies was an asynchronous RPC interface for external plugins.
+That's not the kind of shininess that can be resisted, so I migrated. Writing
+another plugin system for Perl-based plugins along the way, because of 
+course I had to.
+
+But this week, I found out that while I had to, I might not have to anymore.
+
+## Remote Hosts 
+
+When I wrote `Neovim::RPC`, I only knew of the core [RPC support]()
+of Neovim. Writing plugins was the (relatively) easy part. The devilish 
+details were in 
+the VimL code needed to start the child Perl process, the on-demand loading
+of plugins the Perl 
+process itself had to have  so that 
+it'd not have to load the world on startup all the time,
+etc.
+
+As it turns out, Neovim has this concept of `remote hosts`, 
+which provides a standard way of dealing with that heavy lifting.
+
+### Remote Hosts Powered Plugins 
+
+How does it work? Well, let's assume that your favorite language is 
+supported (right now, off the shelf the choices are JavaScript, Python, Python3,
+and Ruby). For the good 
+of this example, let's assume that's `JavaScript`. In that case 
+you'd drop a JavaScript script (or project directory) in
+`~/.config/nvim/rplugin/node`.
+
+Then from within neovim you'd run the command `:UpdateRemotePlugins`,
+which visits all plugins and generates the list of commands, functions,
+and autocommands they provides, which is then saved in
+`~/.local/share/nvim/rplugin.vim`. That file will look something like:
+
+    " node plugins
+    call remote#host#RegisterPlugin('node', '/home/yanick/.config/nvim/rplugin/node/packageName.js', [
+        \ {'sync': v:null, 'name': 'SetPackageName', 'type': 'command', 'opts': {}},
+        \ ])
+    call remote#host#RegisterPlugin('node', '/home/yanick/.config/nvim/rplugin/node/taskwarrior', [
+        \ {'sync': v:null, 'name': 'TaskShow', 'type': 'function', 'opts': {}},
+        \ ])
+
+
+    " python3 plugins
+    call remote#host#RegisterPlugin('python3', '/home/yanick/.config/nvim/plugged/deoplete.nvim/rplugin/python3/deoplete', [
+        \ {'sync': v:false, 'name': '_deoplete_init', 'opts': {}, 'type': 'function'},
+        \ ])
+
+
+Now, the cool part is that thanks to that file, Neovim will only evaluate the
+plugins' code when their associated functions/commands are invoked. 
+Better still: the remote host itself will only spin to life when one of its plugins is
+used. That pay-as-you-go approach means much faster startup time, and let me
+have as many plugins as I want without the fear of savaging my memory budget
+each time I open a new log file.
+
+## A Perl Remote Host?
+
+As you might have notices, Perl is missing from the list of supported remote
+host languages. This is something that could be rectified with a little bit of
+elbow grease. As I mentioned earlier, `Neovim::RPC` does something similar to
+the other remote hosts. The trick would be to tweak it to conform to the 
+standard remote host behavior (TODO link). 
+
+And I might do just that one of these days. But right now, I thought I'd try 
+the already-supported JavaScript remote host, for giggles and a few good
+reasons.
+
+First, it's already there. Although I love building my own monuments to
+Hubris, sometimes a freebee does feel good.
+
+Second, JavaScript was still using the Promise paradigm when I had my
+stab at `Neovim::RPC`. Granted, the JavaScript Promises are a tad more 
+natural than the Perl [Promises](), but the difference
+is not overwhelming. But since came up with `async / await`, and that
+mechanism does makes writing asynchronous code much more legible.
+
+Third, the way `Neovim::RPC` works right now, it's always invoked when neovim
+starts, and it weights close to 50M. The JavaScript remote host clocks less
+than half of that, and as mentioned above, does not even appears until
+a plugin is explicitly required.  
+
+
+All that to say that, for once, I was curious to try what was already on offer
+before rushing in and reimplenting it myself.
+
+## Comparison study #1
+
+## Comparison study #2
+
+
+TODO compare filepackagename
+
+TODO compare TaskwarriorUI
+
+
+
+
+
+
+

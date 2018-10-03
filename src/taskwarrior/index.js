@@ -1,37 +1,37 @@
-const { spawn } = require('child_process');
+const { spawn } = require('child-process-promise');
 
-class Task {
-    constructor( data, tw ) {
-        this.data = data;
-        this.tw = tw;
-    }
-}
+const Task = require('./task').default;
+
+async function spawn_task( args ) {
+    return spawn('task', args, { capture: [ 'stdout', 'stderr' ] })
+};
 
 export default class Taskwarrior {
 
-    async export( args ) {
-        return JSON.parse(
-            await this.run( 'export', args )
-        ).map( task => new Task(task, this) );
+    constructor() {
+        const Queue = require('promise-queue');
+        this.run_queue = new Queue(1,100);
     }
 
-    run( command, args = [], mods = [], options = {} ) {
-        return new Promise( ( resolve, reject ) => {
-            const task = spawn('task', [ ...mods, command, ...args ]);
+    task(data) {
+        return new Task(data,this);
+    }
 
-            let output = '';
+    async export( args ) {
+        let j = await this.run( 'export', args );
+        return JSON.parse(j).map( task => new Task(task, this) );
+    }
 
-            task.stdout.on('data', data => output += data.toString() );
+    async run( command, args = [], mods = [], options = {} ) {
+        if(!options.hasOwnProperty('bulk')) {
+            options.bulk = 100;
+        }
 
-            task.stderr.on('data', (data) => {
-                console.log(`stderr: ${data}`);
-            });
+        let task_args = [ 'rc.confirmation:off', 'rc.bulk:'+options.bulk, ...mods, command, ...args ];
 
-            task.on('close', code => {
-                if( code ) { reject( code ); }
-                else { resolve( output ) }
-            });
-        });
+        let result = await this.run_queue.add( () => spawn_task( task_args ) );
+        
+        return result.stdout ;
     }
 
 

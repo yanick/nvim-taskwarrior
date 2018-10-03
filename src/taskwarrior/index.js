@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const {spawn} = require('child-process-promise');
 
 class Task {
     constructor( data, tw ) {
@@ -9,29 +9,33 @@ class Task {
 
 export default class Taskwarrior {
 
-    async export( args ) {
-        return JSON.parse(
-            await this.run( 'export', args )
-        ).map( task => new Task(task, this) );
+    constructor() {
+        this.run_queue = Promise.resolve();
     }
 
-    run( command, args = [], mods = [], options = {} ) {
-        return new Promise( ( resolve, reject ) => {
-            const task = spawn('task', [ ...mods, command, ...args ]);
+    async export( args ) {
+        console.log("MOTHER");
+        let j = await this.run( 'export', args );
+        console.log('xxx', j);
+        return JSON.parse(j).map( task => new Task(task, this) );
+    }
 
-            let output = '';
+    async run( command, args = [], mods = [], options = {} ) {
+        let previous = this.run_queue;
 
-            task.stdout.on('data', data => output += data.toString() );
+        return this.run_queue = previous.then( () => 
+            spawn(
+                'task', [ ...mods, command, ...args ],
+                { capture: [ 'stdout', 'stderr' ]}
+            ) 
+        ).then( result => {
+            console.log("HEY", result);
+            console.log( result.stderr );
 
-            task.stderr.on('data', (data) => {
-                console.log(`stderr: ${data}`);
-            });
-
-            task.on('close', code => {
-                if( code ) { reject( code ); }
-                else { resolve( output ) }
-            });
-        });
+            return result.stdout;
+        }).catch(
+            e => console.error( e.stderr )
+        );
     }
 
 

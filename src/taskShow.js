@@ -13,8 +13,10 @@ module.exports = plugin => async ( filter = [] ) => {
     const fp = require('lodash/fp');
 
     console.log( "filterx: ", filter );
+    
     let tasks = await plugin.tw().export( filter );
     console.log(tasks);
+
     tasks = tasks |> fp.sortBy( 'data.urgency' )
                 |> fp.reverse 
                 |> fp.map( taskLine );
@@ -41,9 +43,7 @@ function taskLine( {data} ) {
     const moment = require('moment');
 
     [ 'due', 'modified' ].filter( f => data[f] ).forEach( f => {
-        console.log(data[f]);
-        console.log(moment(data[f]).toNow());
-        data[f] = moment(data[f]).toNow();
+        data[f] = moment(data[f]).fromNow();
     });
 
     return '|' + [

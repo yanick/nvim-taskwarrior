@@ -1,5 +1,6 @@
 {
     "plugins": [ 
+        ["@babel/plugin-proposal-pipeline-operator", { "proposal": "minimal" }],
         [ "module-resolver", { "alias": { "~": "./src" } } ],
     ],
     "presets":[ [ "env", { "targets": { "node": "current" } } ]

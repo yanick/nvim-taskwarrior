@@ -1,17 +1,16 @@
 const { spawn } = require('child-process-promise');
 
-class Task {
-    constructor( data, tw ) {
-        this.data = data;
-        this.tw = tw;
-    }
-}
+const Task = require('./task').default;
 
 export default class Taskwarrior {
 
     constructor() {
         const Queue = require('promise-queue');
         this.run_queue = new Queue(1,100);
+    }
+
+    task(data) {
+        return new Task(data,this);
     }
 
     async export( args ) {

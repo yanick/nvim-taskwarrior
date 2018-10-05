@@ -3,23 +3,27 @@ function extract_uuids(lines) {
 }
 
 const taskDelete = plugin => async(args,[start,end]) => {
+    const Task = require( './taskwarrior/task' ).default;
+
     let buffer = await plugin.nvim.buffer;
     let lines  = await buffer.getLines({ start: start - 1, end }); 
 
-    let uuids = extract_uuids(lines);
+    let tasks = extract_uuids(lines).map( uuid => plugin.tw().task({ uuid }) );
 
-    uuids.forEach( uuid => plugin.tw().run( 'delete', [], [ uuid ] ) );
+    tasks.forEach( t => t.delete() );
 };
 
 const taskDone = plugin => async(args,[start,end]) => {
+    const Task = require( './taskwarrior/task' ).default;
+
     let buffer = await plugin.nvim.buffer;
     let lines  = await buffer.getLines({ start: start - 1, end }); 
 
     buffer.remove( start - 1, end ); 
 
-    let uuids = extract_uuids(lines);
+    let tasks = extract_uuids(lines).map( uuid => plugin.tw().task({ uuid }) );
 
-    uuids.forEach( uuid => plugin.tw().run( 'done', [], [ uuid ] ) );
+    tasks.forEach( t => t.done() );
 };
 
 const taskShow = require('./taskShow');
@@ -35,6 +39,10 @@ module.exports = plugin => {
     });
 
     plugin.registerFunction( 'TaskShow', taskShow(plugin) );
+
+    plugin.registerFunction( 'TaskAppend', 
+        require('./taskAppend').default(plugin) 
+    );
 
     plugin.registerFunction( 'TaskDelete', taskDelete(plugin), {
         range: ''

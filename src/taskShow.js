@@ -8,14 +8,13 @@ const replaceCurrentBuffer = plugin => async ( lines ) => {
 
 module.exports = plugin => async ( filter = [] ) => {
 
-    console.log( "filter the duck?: ", filter );
+    if( filter.length === 0 ) {
+        filter = await plugin.nvim.eval( 'input( "filter: ", "+READY" )' );
+    }
 
     const fp = require('lodash/fp');
 
-    console.log( "filterx: ", filter );
-    
     let tasks = await plugin.tw().export( filter );
-    console.log(tasks);
 
     tasks = tasks |> fp.sortBy( 'data.urgency' )
                 |> fp.reverse 

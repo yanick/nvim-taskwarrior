@@ -12,6 +12,8 @@ dependencies:
   moment: 2.22.2
   promise-queue: 2.2.5
   taskwarrior: 1.0.0
+devDependencies:
+  babel-plugin-transform-function-bind: 6.22.0
 packages:
   /@babel/cli/7.1.2:
     dependencies:
@@ -419,6 +421,11 @@ packages:
     resolution:
       integrity: sha1-nufoM3KQ2pUoggGmpX9BcDF4MN4=
       tarball: 'http://registry.npmjs.org/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz'
+  /babel-plugin-syntax-function-bind/6.13.0:
+    dev: true
+    resolution:
+      integrity: sha1-SMSV8Xe98xqYHnMvVa3AvdJgH0Y=
+      tarball: 'http://registry.npmjs.org/babel-plugin-syntax-function-bind/-/babel-plugin-syntax-function-bind-6.13.0.tgz'
   /babel-plugin-syntax-trailing-function-commas/6.22.0:
     dev: false
     resolution:
@@ -607,6 +614,13 @@ packages:
     dev: false
     resolution:
       integrity: sha1-KrDJx/MJj6SJB3cruBP+QejeOg4=
+  /babel-plugin-transform-function-bind/6.22.0:
+    dependencies:
+      babel-plugin-syntax-function-bind: 6.13.0
+      babel-runtime: 6.26.0
+    dev: true
+    resolution:
+      integrity: sha1-xvuOlqwpajELjPjqQBRiQH3fapc=
   /babel-plugin-transform-regenerator/6.26.0:
     dependencies:
       regenerator-transform: 0.10.1
@@ -659,7 +673,6 @@ packages:
     dependencies:
       core-js: 2.5.7
       regenerator-runtime: 0.11.1
-    dev: false
     resolution:
       integrity: sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
   /babel-template/6.26.0:
@@ -898,7 +911,6 @@ packages:
     resolution:
       integrity: sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=
   /core-js/2.5.7:
-    dev: false
     resolution:
       integrity: sha512-RszJCAxg/PP6uzXVXL6BsxSXx/B05oJAQ2vkJRjyjrEcNVycaqOmNb5OTxZPE3xa5gwZduqza6L9JOCenh/Ecw==
   /core-util-is/1.0.2:
@@ -1810,7 +1822,6 @@ packages:
     resolution:
       integrity: sha512-1G6jJVDWrt0rK99kBjvEtziZNCICAuvIPkSiUFIQxVP06RCVpq3dmDo2oi6ABpYaDYaTRr67BEhL8r1wgEZZKg==
   /regenerator-runtime/0.11.1:
-    dev: false
     resolution:
       integrity: sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
   /regenerator-transform/0.10.1:
@@ -2189,6 +2200,7 @@ specifiers:
   '@babel/preset-stage-0': ^7.0.0
   '@babel/preset-stage-1': ^7.0.0
   babel-plugin-module-resolver: ^3.1.1
+  babel-plugin-transform-function-bind: ^6.22.0
   babel-preset-env: ^1.7.0
   child-process-promise: ^2.2.1
   lodash: ^4.17.11

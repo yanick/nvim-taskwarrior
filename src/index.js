@@ -1,54 +1,32 @@
-function extract_uuids(lines) {
-    return lines.map( l => l.match( /[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}/g ) ).filter( x => x ).map( x => x[0] );
-}
 
-const taskDelete = plugin => async(args,[start,end]) => {
-    const Task = require( './taskwarrior/task' ).default;
+import taskShow from './taskShow';
+import taskDone from './taskDone';
+import taskDelete from './taskDelete';
+import taskAppend from './taskAppend';
 
-    let buffer = await plugin.nvim.buffer;
-    let lines  = await buffer.getLines({ start: start - 1, end }); 
+module.exports = class Task {
 
-    let tasks = extract_uuids(lines).map( uuid => plugin.tw().task({ uuid }) );
+    constructor ( plugin ) {
+        plugin.setOptions({ dev: true, });
+        this.plugin = plugin;
 
-    tasks.forEach( t => t.delete() );
-};
+        plugin.registerFunction( 'TaskShow', [ this, taskShow ] );
 
-const taskDone = plugin => async(args,[start,end]) => {
-    const Task = require( './taskwarrior/task' ).default;
+        plugin.registerFunction( 'TaskAppend', [ this, taskAppend ], { range: '' } );
 
-    let buffer = await plugin.nvim.buffer;
-    let lines  = await buffer.getLines({ start: start - 1, end }); 
+        plugin.registerFunction( 'TaskDelete', [ this, taskDelete ], { range: '' });
+        plugin.registerFunction( 'TaskDone', [ this, taskDone ], { range: '' });
+    }
 
-    buffer.remove( start - 1, end ); 
+    get nvim() { return this.plugin.nvim }
 
-    let tasks = extract_uuids(lines).map( uuid => plugin.tw().task({ uuid }) );
+    get tw() {
+        if( !this._tw ) {
+            const Taskwarrior = require( './taskwarrior').default;
+            this._tw = new Taskwarrior();
+        }
 
-    tasks.forEach( t => t.done() );
-};
+        return this._tw;
+    }
 
-const taskShow = require('./taskShow');
-
-module.exports = plugin => {
-    plugin.setOptions({ dev: true, });
-
-    const _ = require('lodash');
-
-    plugin.tw = _.once( () => { 
-        const Taskwarrior = require( './taskwarrior').default;
-        return new Taskwarrior();
-    });
-
-    plugin.registerFunction( 'TaskShow', taskShow(plugin) );
-
-    plugin.registerFunction( 'TaskAppend', 
-        require('./taskAppend').default(plugin) 
-    );
-
-    plugin.registerFunction( 'TaskDelete', taskDelete(plugin), {
-        range: ''
-    });
-
-    plugin.registerFunction( 'TaskDone', taskDone(plugin), {
-        range: ''
-    });
 };

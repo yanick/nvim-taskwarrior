@@ -1,53 +1,34 @@
-const replaceCurrentBuffer = plugin => async ( lines ) => {
-    const buffer = await plugin.nvim.buffer;
+import _ from 'lodash';
 
-    await buffer.setLines(lines, {
-        start: 0, end: -1, strictIndexing: true,
-    });
-};
+let fp;
+let replaceCurrentBuffer;
+let taskLine;
 
-module.exports = plugin => async ( filter = [] ) => {
+const init = _.once( () => {
+    const utils = require('./utils');
+    replaceCurrentBuffer = utils.replaceCurrentBuffer;
+    taskLine = utils.taskLine;
+    fp = require('lodash/fp');
+});
+
+module.exports = async function taskShow( filter = [] ) {
+    init();
 
     if( filter.length === 0 ) {
-        filter = await plugin.nvim.eval( 'input( "filter: ", "+READY" )' );
+        filter = await this.nvim.eval( 'input( "filter: ", "+READY" )' );
     }
 
-    const fp = require('lodash/fp');
+    let tasks = (
+        await this.tw.export( filter )
+    ) |> fp.sortBy( 'data.urgency' )
+      |> fp.reverse 
+      |> fp.map( taskLine );
 
-    let tasks = await plugin.tw().export( filter );
-
-    tasks = tasks |> fp.sortBy( 'data.urgency' )
-                |> fp.reverse 
-                |> fp.map( taskLine );
-
-    await replaceCurrentBuffer(plugin)(tasks);
+   await this::replaceCurrentBuffer(tasks);
 
     await Promise.all([
-        plugin.nvim.input('1G'),
-        plugin.nvim.command(':TableModeRealign'),
+        this.nvim.input('1G'),
+        this.nvim.command(':TableModeRealign'),
     ]);
 };
 
-function taskLine( {data} ) {
-    const _ = require('lodash');
-
-    data.urgency = parseInt(data.urgency);
-
-    if( data.tags ) data.tags = data.tags.join(' ');
-
-    if ( data.project && data.project.length > 15 ) {
-        data.project = _.truncate( data.project, 15 );
-    }
-
-    const moment = require('moment');
-
-    [ 'due', 'modified' ].filter( f => data[f] ).forEach( f => {
-        data[f] = moment(data[f]).fromNow();
-    });
-
-    return '|' + [
-        'urgency', 'priority', 'due', 'description', 'project',
-        'tags', 'modified', 'uuid'
-    ].map( k => data[k] || ' ' ).join( '|' ).replace( /\n/g, ' ' );
-
-}

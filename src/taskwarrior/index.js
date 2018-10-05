@@ -21,6 +21,7 @@ export default class Taskwarrior {
     async run( command, args = [], mods = [], options = {} ) {
         return this.run_queue.add(
             async() => {
+                let line = [ 'task', ...mods, command, ...args ];
                 return await spawn('task', [ ...mods, command, ...args ],
                     { capture: [ 'stdout', 'stderr' ] });
             }

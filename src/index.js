@@ -3,6 +3,7 @@ import taskShow from './taskShow';
 import taskDone from './taskDone';
 import taskDelete from './taskDelete';
 import taskAppend from './taskAppend';
+import taskUpdate from './taskUpdate';
 
 module.exports = class Task {
 
@@ -13,9 +14,15 @@ module.exports = class Task {
         plugin.registerFunction( 'TaskShow', [ this, taskShow ] );
 
         plugin.registerFunction( 'TaskAppend', [ this, taskAppend ], { range: '' } );
+        plugin.registerFunction( 'TaskUpdate', [ this, taskUpdate ], { range: '' } );
 
         plugin.registerFunction( 'TaskDelete', [ this, taskDelete ], { range: '' });
         plugin.registerFunction( 'TaskDone', [ this, taskDone ], { range: '' });
+
+        plugin.registerCommand( 'TaskFoo', async () => {
+            let b = plugin.nvim.buffer;
+            b.replace( [ 'a','b','c' ], 3 );
+        });
     }
 
     get nvim() { return this.plugin.nvim }

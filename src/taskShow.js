@@ -15,7 +15,7 @@ module.exports = async function taskShow( filter = [] ) {
     init();
 
     if( filter.length === 0 ) {
-        filter = await this.nvim.eval( 'input( "filter: ", "+READY" )' );
+        filter = ( await this.nvim.eval( 'input( "filter: ", "+READY" )' ) ).split( ' ' );
     }
 
     let tasks = (

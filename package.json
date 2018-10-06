@@ -19,6 +19,7 @@
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-preset-env": "^1.7.0",
     "child-process-promise": "^2.2.1",
+    "debug": "^4.0.1",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "promise-queue": "^2.2.5",

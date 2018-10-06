@@ -2,6 +2,10 @@ const { spawn } = require('child-process-promise');
 
 const Task = require('./task').default;
 
+async function spawn_task( args ) {
+    return spawn('task', args, { capture: [ 'stdout', 'stderr' ] })
+};
+
 export default class Taskwarrior {
 
     constructor() {
@@ -19,17 +23,15 @@ export default class Taskwarrior {
     }
 
     async run( command, args = [], mods = [], options = {} ) {
-        return this.run_queue.add(
-            async() => {
-                let line = [ 'task', ...mods, command, ...args ];
-                return await spawn('task', [ ...mods, command, ...args ],
-                    { capture: [ 'stdout', 'stderr' ] });
-            }
-        ).then( result => {
-            //console.log( result.stderr );
-            return result.stdout ;
-        })
-        .catch( error => console.error(error) );
+        if(!options.hasOwnProperty('bulk')) {
+            options.bulk = 100;
+        }
+
+        let task_args = [ 'rc.confirmation:off', 'rc.bulk:'+options.bulk, ...mods, command, ...args ];
+
+        let result = await this.run_queue.add( () => spawn_task( task_args ) );
+        
+        return result.stdout ;
     }
 
 

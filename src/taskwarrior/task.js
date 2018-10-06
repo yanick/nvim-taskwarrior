@@ -6,6 +6,10 @@ export default class Task {
 
     get uuid () { return this.data.uuid }
 
+    async update() {
+        return ( await this.tw.export([ this.uuid ]) )[0];
+    }
+
     async append(to_append) {
         return this.tw.run( 'append', [ to_append ], [ this.uuid ] );
     }

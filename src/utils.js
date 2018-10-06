@@ -27,10 +27,6 @@ export function taskLine( {data} ) {
         ...(data.tags.map( t => '+' + t )) ].join(' ');
     }
 
-    if ( data.project && data.project.length > 15 ) {
-        data.project = _.truncate( data.project, 15 );
-    }
-
     [ 'due', 'modified' ].filter( f => data[f] ).forEach( f => {
         data[f] = moment(data[f]).fromNow();
     });

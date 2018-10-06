@@ -1,11 +1,12 @@
 import _ from 'lodash';
 
-let extract_uuids, Task, taskLine;
+let extract_uuids, Task, taskLine, taskUpdate;
 
 const init = _.once( () => {
     Task = require( './taskwarrior/task' ).default;
     extract_uuids = require( './utils' ).extract_uuids;
     taskLine = require( './utils' ).taskLine;
+    taskUpdate = require('./taskUpdate').default;
 });
 
 export default async function ( to_append, [ start, end ] ) {
@@ -20,11 +21,8 @@ export default async function ( to_append, [ start, end ] ) {
     let buffer = await this.nvim.buffer;
     let lines  = await buffer.getLines({ start: start - 1, end }); 
 
-    let tasks = extract_uuids(lines).map( uuid => this.tw.task({ uuid }) );
+    await this.tw.run( 'append', [ to_append ], extract_uuids(lines) );
 
-    tasks.forEach( t => {
-        t.append(to_append);
-        //update_in_vim(t);
-    });
+    await this::taskUpdate([],[start,end]);
 };
 

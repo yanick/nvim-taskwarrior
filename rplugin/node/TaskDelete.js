@@ -16,15 +16,15 @@ var _TaskCommand2 = _interopRequireDefault(_TaskCommand);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-module.exports = class TaskDone extends _TaskCommand2.default {
+module.exports = class TaskDelete extends _TaskCommand2.default {
   constructor(plugin) {
     super(plugin);
-    plugin.registerFunction('TaskDone', [this, this.taskDone], {
+    plugin.registerFunction('TaskDelete', [this, this.taskDelete], {
       range: true
     });
   }
 
-  async taskDone(args, [start, end]) {
+  async taskDelete(args, [start, end]) {
     let buffer = await this.nvim.buffer;
     let lines = await buffer.getLines({
       start: start - 1,

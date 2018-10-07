@@ -1,5 +1,7 @@
 # nvim-taskwarrior - Neovim UI for Taskwarrior
 
+[![asciicast](https://asciinema.org/a/NHDYcXrhwi0t8dLCkqv8IhM2W.png)](https://asciinema.org/a/NHDYcXrhwi0t8dLCkqv8IhM2W)
+
 ## Install 
 
 This plugin requires the plugin

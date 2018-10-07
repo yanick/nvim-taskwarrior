@@ -4,7 +4,8 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src/* -d rplugin/node"
   },
   "keywords": [],
   "author": "Yanick Champoux <yanick@babyl.ca> (http://techblog.babyl.ca)",

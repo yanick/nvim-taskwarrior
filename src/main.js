@@ -1,5 +1,5 @@
 
-import taskShow from './taskShow';
+//import taskShow from './TaskShow';
 import taskDone from './taskDone';
 import taskDelete from './taskDelete';
 import taskAppend from './taskAppend';
@@ -11,7 +11,7 @@ module.exports = class Task {
         plugin.setOptions({ dev: true, });
         this.plugin = plugin;
 
-        plugin.registerFunction( 'TaskShow', [ this, taskShow ] );
+ //       plugin.registerFunction( 'TaskShow', [ this, taskShow ] );
 
         plugin.registerFunction( 'TaskAppend', [ this, taskAppend ], { range: '' } );
         plugin.registerFunction( 'TaskUpdate', [ this, taskUpdate ], { range: '' } );

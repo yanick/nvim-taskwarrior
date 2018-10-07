@@ -1,9 +1,5 @@
 "use strict";
 
-var _taskShow = require("./taskShow");
-
-var _taskShow2 = _interopRequireDefault(_taskShow);
-
 var _taskDone = require("./taskDone");
 
 var _taskDone2 = _interopRequireDefault(_taskDone);
@@ -22,13 +18,14 @@ var _taskUpdate2 = _interopRequireDefault(_taskUpdate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//import taskShow from './TaskShow';
 module.exports = class Task {
   constructor(plugin) {
     plugin.setOptions({
       dev: true
     });
-    this.plugin = plugin;
-    plugin.registerFunction('TaskShow', [this, _taskShow2.default]);
+    this.plugin = plugin; //       plugin.registerFunction( 'TaskShow', [ this, taskShow ] );
+
     plugin.registerFunction('TaskAppend', [this, _taskAppend2.default], {
       range: ''
     });

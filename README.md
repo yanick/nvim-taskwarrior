@@ -1,5 +1,27 @@
 # nvim-taskwarrior - Neovim UI for Taskwarrior
 
+## Install
+
+### Using [vim-plug](https://github.com/junegunn/vim-plug)
+
+In `~/.config/nvim/init.vim`
+
+    call plug#begin('~/.config/nvim/plugged')
+
+    Plug 'dhruvasagar/vim-table-mode', {
+    \ 'on': [ 'TableModeEnable' ]
+    \ }
+
+    function! NvimTwUpdate(args)
+        !npm install 
+            " npm could also be yarn or pnpm
+        UpdateRemotePlugins
+    endfunction
+
+    Plug 'yanick/nvim-taskwarrior', { 'do': function('NvimTwUpdate') }
+
+    call plug#end()
+
 TODO 
     npm install
     npm run build
@@ -8,7 +30,7 @@ function! DoRemote(arg)
     UpdateRemotePlugins
 endfunction
 
-Plug 'yanick/nvim-taskwarrior', { 'do': function('DoRemote') }
+Plug 'yanick/nvim-taskwarrior', { 'do': function('NvimTwUpdate') }
 
 TODO mention TableMode
 

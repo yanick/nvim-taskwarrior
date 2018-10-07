@@ -29,6 +29,8 @@ defined in ``./ftplugin/taskwarrior.vim`.
 
 Most mappings work in both normal and visual mode.
 
+| map | command |
+| --- | --- |
 | \L ll | TaskShow('+READY')|
 | \L lf | TaskShow('+READY +focus')|
 | \L lq | TaskShow()|

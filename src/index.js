@@ -17,6 +17,7 @@ module.exports = plugin => {
         [ 'TaskDelete', { range: true } ],
         [ 'TaskDone', { range: true } ],
         [ 'TaskUpdate', { range: true } ],
+        [ 'TaskInfo', { range: true } ],
     ].forEach( ([ name, options ]) => {
         plugin.registerFunction( name, pluginFunc(name), options );
     });

@@ -21,4 +21,8 @@ export default class Task {
     async delete() {
         return this.tw.run( 'delete', [], [ this.uuid ] );
     }
+
+    async info() {
+        return this.tw.run( 'info', [], [ this.uuid ] );
+    }
 }

@@ -48,6 +48,8 @@ a `.tw` file, or do `:set filetype=taskwarrior`.
 
     TaskAppend()
 
+    TaskInfo()
+
 ## Mappings
 
 defined in ``./ftplugin/taskwarrior.vim`.
@@ -66,6 +68,7 @@ Most mappings work in both normal and visual mode.
 | \L D | TaskDelete()|
 | ||
 | \L a | TaskAppend()|
+| \L i | TaskInfo()|
 | ||
 | \L 1 | TaskAppend('priority:L')|
 | \L 2 | TaskAppend('priority:M')|

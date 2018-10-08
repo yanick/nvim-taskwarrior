@@ -30,6 +30,10 @@ class Task {
     return this.tw.run('delete', [], [this.uuid]);
   }
 
+  async info() {
+    return this.tw.run('info', [], [this.uuid]);
+  }
+
 }
 
 exports.default = Task;

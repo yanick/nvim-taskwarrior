@@ -20,6 +20,8 @@ module.exports = plugin => {
     range: true
   }], ['TaskUpdate', {
     range: true
+  }], ['TaskInfo', {
+    range: true
   }]].forEach(([name, options]) => {
     plugin.registerFunction(name, pluginFunc(name), options);
   });

@@ -16,6 +16,9 @@ vmap <buffer> <leader>D :call TaskDelete()<CR>
 map  <buffer> <leader>a :call TaskAppend()<CR>
 vmap <buffer> <leader>a :call TaskAppend()<CR>
 
+map  <buffer> <leader>i :call TaskInfo()<CR>
+vmap <buffer> <leader>i :call TaskInfo()<CR>
+
 map  <buffer> <leader>1 :call TaskAppend('priority:L')<CR>
 vmap <buffer> <leader>1 :call TaskAppend('priority:L')<CR>
 

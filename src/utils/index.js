@@ -22,6 +22,10 @@ export function taskLine( {data} ) {
 
     data.urgency = parseInt(data.urgency);
 
+    if ( data.annotations ) {
+        data.description += ' [N]';
+    }
+
     if( data.tags ) {
         data.description = [ data.description, 
         ...(data.tags.map( t => '+' + t )) ].join(' ');

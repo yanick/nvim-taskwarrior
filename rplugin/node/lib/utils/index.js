@@ -35,6 +35,10 @@ function taskLine({
   data = _lodash2.default.clone(data);
   data.urgency = parseInt(data.urgency);
 
+  if (data.annotations) {
+    data.description += ' [N]';
+  }
+
   if (data.tags) {
     data.description = [data.description, ...data.tags.map(t => '+' + t)].join(' ');
   }
